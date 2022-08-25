@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">NavDrawer</string>
+    <string name="opennav">navigation_drawer_open</string>
+    <string name="closenav">navigation_drawer_close</string>
+</resources>
