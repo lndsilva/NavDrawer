@@ -1,14 +1,19 @@
 package br.com.local.navdrawer;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.widget.ToolbarWidgetWrapper;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -20,8 +25,8 @@ import com.google.android.material.navigation.NavigationView;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     MaterialToolbar toolbar;
     DrawerLayout drawerLayout;
-
     NavigationView navigationView;
+    ActionBarDrawerToggle toggle;
 
 
     @Override
@@ -33,7 +38,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.idDrawerLayout);
         navigationView = findViewById(R.id.idNavigationView);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        //Clique no menu para abrir e fechar o NavigationView
+        toggle = new ActionBarDrawerToggle(
                 this, drawerLayout,
                 toolbar,
                 R.string.opennav,
@@ -47,35 +53,66 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+        Fragment fragment = null;
+        Class fragmentClass;
+
         switch (item.getItemId()) {
             case R.id.mImport:
-                Toast.makeText(getApplicationContext(), "Cliquei no import",
-                        Toast.LENGTH_SHORT).show();
+                fragmentClass = ImportFragment.class;
                 break;
             case R.id.mGallery:
-                Toast.makeText(getApplicationContext(), "Cliquei no gallery",
-                        Toast.LENGTH_SHORT).show();
+                fragmentClass = GalleryFragment.class;
                 break;
             case R.id.mSlideShow:
-                Toast.makeText(getApplicationContext(), "Cliquei no slideshow",
-                        Toast.LENGTH_SHORT).show();
+                fragmentClass = SlideShowFragment.class;
                 break;
             case R.id.mSend:
-                Toast.makeText(getApplicationContext(), "Cliquei no send",
-                        Toast.LENGTH_SHORT).show();
+                fragmentClass = SendFragment.class;
                 break;
             case R.id.mShare:
-                Toast.makeText(getApplicationContext(), "Cliquei no share",
-                        Toast.LENGTH_SHORT).show();
+                fragmentClass = ShareFragment.class;
                 break;
             case R.id.mSettings:
-                Toast.makeText(getApplicationContext(), "Cliquei no settings",
-                        Toast.LENGTH_SHORT).show();
+                fragmentClass = SettingsFragment.class;
                 break;
+            default:
+                fragmentClass = ImportFragment.class;
         }
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.idContainerNav, fragment).commit();
+
         drawerLayout.closeDrawer(GravityCompat.START);
 
 
         return true;
+    }
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+
+        toggle.syncState();
+
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        toggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (toggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+
     }
 }
