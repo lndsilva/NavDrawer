@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.idDrawerLayout);
         navigationView = findViewById(R.id.idNavigationView);
 
+        navigationView.setNavigationItemSelectedListener(this);
+
         //Clique no menu para abrir e fechar o NavigationView
         toggle = new ActionBarDrawerToggle(
                 this, drawerLayout,
@@ -47,45 +49,56 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView.setNavigationItemSelectedListener(this);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.idContainerNav, new ImportFragment()).commit();
+
+            navigationView.setCheckedItem(R.id.mImport);
+        }
+
+
     }
 
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        Fragment fragment = null;
-        Class fragmentClass;
-
         switch (item.getItemId()) {
             case R.id.mImport:
-                fragmentClass = ImportFragment.class;
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.idContainerNav, new ImportFragment()).commit();
+
                 break;
             case R.id.mGallery:
-                fragmentClass = GalleryFragment.class;
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.idContainerNav, new GalleryFragment()).commit();
                 break;
             case R.id.mSlideShow:
-                fragmentClass = SlideShowFragment.class;
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.idContainerNav, new SlideShowFragment()).commit();
                 break;
             case R.id.mSend:
-                fragmentClass = SendFragment.class;
-                break;
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.idContainerNav, new SendFragment()).commit();
             case R.id.mShare:
-                fragmentClass = ShareFragment.class;
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.idContainerNav, new ShareFragment()).commit();
                 break;
             case R.id.mSettings:
-                fragmentClass = SettingsFragment.class;
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.idContainerNav, new SettingsFragment()).commit();
                 break;
             default:
-                fragmentClass = ImportFragment.class;
+
         }
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.idContainerNav, fragment).commit();
+
 
         drawerLayout.closeDrawer(GravityCompat.START);
 
